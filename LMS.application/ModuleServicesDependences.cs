@@ -12,7 +12,6 @@ namespace LMS.Application
     {
         public static IServiceCollection AddReposetoriesServices(this IServiceCollection services)
         {
-            services.AddScoped<CloudinaryService>();
             services.AddLogging();
             services.AddAutoMapper(typeof(MappingProfile));
             services.AddTransient<IAuthService, AuthService>();
