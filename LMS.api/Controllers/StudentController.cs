@@ -22,5 +22,21 @@ namespace LMS.Api.Controllers
             var count = await _studentService.EnrolledStudentsCount();
             return Ok(count);
         }
+        [HttpPut("image")]
+        public async Task<IActionResult> UpdateImage(IFormFile newImage)
+        {
+            var result = await _studentService.EditStudentImage(newImage);
+            return result ? Ok("updated successfully") : BadRequest("failed to update");
+
+        }
+
+
+        [HttpDelete("image")]
+        public async Task<IActionResult> DeleteImage()
+        {
+            var result = await _studentService.DeleteStudentPictureAsync();
+            return result ? Ok("deleted successfully") : BadRequest("failed to delete");
+
+        }
     }
 }

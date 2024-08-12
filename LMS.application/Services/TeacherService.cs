@@ -25,7 +25,6 @@ namespace LMS.Application.Services
             {
                 if (oldImgPath != null)
                     await _userHelpers.DeleteFileAsync(oldImgPath, Folder.Profile);
-                //await _cloudinaryService.DeleteImageAsync(oldImgPath);
                 return true;
             }
             return false;
@@ -38,14 +37,12 @@ namespace LMS.Application.Services
             var oldImgPath = user.Image;
             user.Image = await _userHelpers.AddFileAsync(image, Folder.Profile);
 
-            //user.Image = await _cloudinaryService.UploadImageAsync(image);
 
             await _unitOfWork.Users.UpdateAsync(user);
             if (await _unitOfWork.SaveAsync() > 0)
             {
                 if (oldImgPath != null)
                     await _userHelpers.DeleteFileAsync(oldImgPath, Folder.Profile);
-                //await _cloudinaryService.DeleteImageAsync(oldImgPath);
                 return true;
             }
             return false;

@@ -10,8 +10,6 @@ namespace LMS.Application.Authentication
         [Required]
         public string LastName { get; set; }
         [Required]
-        public string Govenorate { get; set; }
-        [Required]
         public string PhoneNumber { get; set; }
         [Required]
         public string Email { get; set; }

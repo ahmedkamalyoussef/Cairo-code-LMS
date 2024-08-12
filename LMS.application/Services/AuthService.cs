@@ -268,7 +268,7 @@ namespace LMS.Application.Services
             if (user.OTP != verifyOTPRequest.OTP || user.OTPExpiry < DateTime.UtcNow)
                 return IdentityResult.Failed(new IdentityError { Description = "Invalid or expired OTP" });
 
-            user.OTP = string.Empty;
+            user.OTP = null;
             user.OTPExpiry = DateTime.MinValue;
             user.EmailConfirmed = true;
             await _userManager.UpdateAsync(user);
