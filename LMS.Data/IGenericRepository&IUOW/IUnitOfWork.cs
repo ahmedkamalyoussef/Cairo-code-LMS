@@ -18,7 +18,7 @@ namespace LMS.Data.IGenericRepository_IUOW
         IGenericRepository<StudentCourse> StudentCourses { get; set; }
         IGenericRepository<ExamResult> ExamResults { get; set; }
         IGenericRepository<Evaluation> Evaluations { get; set; }
-
+        IGenericRepository<LiveClass> LiveClasses { get; set; }
 
         Task CreateTransactionAsync();
         Task CommitAsync();

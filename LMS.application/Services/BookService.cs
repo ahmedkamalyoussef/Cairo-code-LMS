@@ -9,12 +9,11 @@ using Microsoft.AspNetCore.Http;
 
 namespace LMS.Application.Services
 {
-    public class BookService(IUnitOfWork unitOfWork, IMapper mapper, IUserHelpers userHelpers, CloudinaryService cloudinaryService) : IBookService
+    public class BookService(IUnitOfWork unitOfWork, IMapper mapper, IUserHelpers userHelpers) : IBookService
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IMapper _mapper = mapper;
         private readonly IUserHelpers _userHelpers = userHelpers;
-        private readonly CloudinaryService _cloudinaryService = cloudinaryService;
 
         public async Task<bool> CreateBook(BookDTO bookDto, IFormFile file)
         {

@@ -58,6 +58,21 @@ namespace LMS.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "LiveClass",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StartDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Link = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LiveClass", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -568,6 +583,9 @@ namespace LMS.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Lecture");
+
+            migrationBuilder.DropTable(
+                name: "LiveClass");
 
             migrationBuilder.DropTable(
                 name: "RefreshToken");

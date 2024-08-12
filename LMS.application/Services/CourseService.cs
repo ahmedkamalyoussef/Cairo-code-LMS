@@ -10,12 +10,11 @@ using Microsoft.AspNetCore.Http;
 
 namespace LMS.Application.Services
 {
-    public class CourseService(IUnitOfWork unitOfWork, IMapper mapper, IUserHelpers userHelpers, CloudinaryService cloudinaryService) : ICourseService
+    public class CourseService(IUnitOfWork unitOfWork, IMapper mapper, IUserHelpers userHelpers) : ICourseService
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IMapper _mapper = mapper;
         private readonly IUserHelpers _userHelpers = userHelpers;
-        private readonly CloudinaryService _cloudinaryService = cloudinaryService;
         public async Task<bool> CreateCourse(CourseDTO courseDto, IFormFile img)
         {
             var teacher = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");

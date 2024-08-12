@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LMS.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240810205333_init")]
-    partial class init
+    [Migration("20240812004233_edit-live-class")]
+    partial class editliveclass
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -319,6 +319,36 @@ namespace LMS.Infrastructure.Migrations
                     b.HasIndex("QuestionId");
 
                     b.ToTable("Answer");
+                });
+
+            modelBuilder.Entity("LMS.Domain.Entities.LiveClass", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CreatorId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("EndDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Link")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.ToTable("LiveClass");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -661,6 +691,17 @@ namespace LMS.Infrastructure.Migrations
                     b.Navigation("Question");
                 });
 
+            modelBuilder.Entity("LMS.Domain.Entities.LiveClass", b =>
+                {
+                    b.HasOne("LMS.Data.Entities.Teacher", "Creator")
+                        .WithMany("LiveClasses")
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -776,6 +817,8 @@ namespace LMS.Infrastructure.Migrations
             modelBuilder.Entity("LMS.Data.Entities.Teacher", b =>
                 {
                     b.Navigation("Courses");
+
+                    b.Navigation("LiveClasses");
                 });
 #pragma warning restore 612, 618
         }

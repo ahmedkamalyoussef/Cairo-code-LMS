@@ -7,12 +7,11 @@ using Microsoft.AspNetCore.Http;
 
 namespace LMS.Application.Services
 {
-    public class TeacherService(IUnitOfWork unitOfWork, IUserHelpers userHelpers, CloudinaryService cloudinaryService) : ITeacherService
+    public class TeacherService(IUnitOfWork unitOfWork, IUserHelpers userHelpers) : ITeacherService
     {
 
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IUserHelpers _userHelpers = userHelpers;
-        private readonly CloudinaryService _cloudinaryService = cloudinaryService;
 
 
         public async Task<bool> DeleteTeacherPictureAsync()

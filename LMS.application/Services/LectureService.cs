@@ -9,12 +9,11 @@ using Microsoft.AspNetCore.Http;
 
 namespace LMS.Application.Services
 {
-    public class LectureService(IUnitOfWork unitOfWork, IMapper mapper, IUserHelpers userHelpers, CloudinaryService cloudinaryService) : ILectureService
+    public class LectureService(IUnitOfWork unitOfWork, IMapper mapper, IUserHelpers userHelpers) : ILectureService
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IMapper _mapper = mapper;
         private readonly IUserHelpers _userHelpers = userHelpers;
-        private readonly CloudinaryService _cloudinaryService = cloudinaryService;
 
         public async Task<bool> CreateLecture(LectureDTO lectureDto, IFormFile file)
         {

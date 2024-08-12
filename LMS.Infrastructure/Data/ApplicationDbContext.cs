@@ -15,7 +15,7 @@ namespace LMS.Infrastructure.Data
         public DbSet<Admin> Admin { get; set; }
         public DbSet<Course> Course { get; set; }
         public DbSet<StudentCourse> StudentCourse { get; set; }
-
+        public DbSet<LiveClass> LiveClass { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -69,6 +69,9 @@ namespace LMS.Infrastructure.Data
             new QuestionEntityTypeConfiguration().Configure(modelBuilder.Entity<Question>());
             #endregion
 
+            #region LiveClass
+            new LiveClassEntityTypeConfiguration().Configure(modelBuilder.Entity<LiveClass>());
+            #endregion
             SeedRoles(modelBuilder);
 
         }
@@ -77,7 +80,7 @@ namespace LMS.Infrastructure.Data
         {
             modelBuilder.Entity<IdentityRole>().HasData
                 (
-                  new IdentityRole() { Id = "1", Name = ConstRoles.Admin  , NormalizedName = ConstRoles.Admin ,ConcurrencyStamp = ConstRoles.Admin     },
+                  new IdentityRole() { Id = "1", Name = ConstRoles.Admin, NormalizedName = ConstRoles.Admin, ConcurrencyStamp = ConstRoles.Admin },
                   new IdentityRole() { Id = "2", Name = ConstRoles.Teacher, NormalizedName = ConstRoles.Teacher, ConcurrencyStamp = ConstRoles.Teacher },
                   new IdentityRole() { Id = "3", Name = ConstRoles.Student, NormalizedName = ConstRoles.Student, ConcurrencyStamp = ConstRoles.Student }
                 );

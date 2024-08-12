@@ -15,6 +15,7 @@ namespace LMS.Application
             services.AddLogging();
             services.AddAutoMapper(typeof(MappingProfile));
             services.AddTransient<IAuthService, AuthService>();
+            services.AddTransient<ILiveClassService, LiveClassService>();
             services.AddTransient<ICourseService, CourseService>();
             services.AddTransient<IStudentService, StudentService>();
             services.AddTransient<ITeacherService, TeacherService>();
