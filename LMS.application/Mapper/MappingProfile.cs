@@ -69,7 +69,9 @@ namespace LMS.Application.Mapper
 
             #region LiveClass
             CreateMap<LiveClass, LiveClassDTO>();
-            CreateMap<LiveClassDTO, LiveClass>();
+            CreateMap<EditLiveClassDTO, LiveClass>();
+            CreateMap<AddLiveClassDTO, LiveClass>();
+
             #endregion
         }
 

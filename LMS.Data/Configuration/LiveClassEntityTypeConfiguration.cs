@@ -13,6 +13,11 @@ namespace LMS.Domain.Configuration
                 .WithMany(q => q.LiveClasses)
                 .HasForeignKey(a => a.CourserId)
                 .OnDelete(DeleteBehavior.Cascade);
+            builder
+                .HasOne(a => a.Creator)
+                .WithMany(q => q.LiveClasses)
+                .HasForeignKey(a => a.CreatorId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

@@ -14,7 +14,7 @@
         public bool IsEnrolled { get; set; }
         public double Evaluation { get; set; }
         public string? Content { get; set; }
-        public string? Detauls { get; set; }
+        public string? Details { get; set; }
         public TeacherResultDTO Teacher { get; set; }
     }
 }

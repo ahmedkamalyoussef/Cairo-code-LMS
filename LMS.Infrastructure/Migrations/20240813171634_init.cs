@@ -34,7 +34,6 @@ namespace LMS.Infrastructure.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Govenorate = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OTP = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     OTPExpiry = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -55,21 +54,6 @@ namespace LMS.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "LiveClass",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    StartDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Link = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LiveClass", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -222,7 +206,8 @@ namespace LMS.Infrastructure.Migrations
                 name: "Student",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -265,6 +250,8 @@ namespace LMS.Infrastructure.Migrations
                     Semester = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Price = table.Column<double>(type: "float", nullable: false),
                     TeacherId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Details = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Code = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -360,6 +347,34 @@ namespace LMS.Infrastructure.Migrations
                         principalTable: "Course",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LiveClass",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StartDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Duration = table.Column<double>(type: "float", nullable: false),
+                    Link = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CourserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CreatorId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LiveClass", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LiveClass_Course_CourserId",
+                        column: x => x.CourserId,
+                        principalTable: "Course",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_LiveClass_Teacher_CreatorId",
+                        column: x => x.CreatorId,
+                        principalTable: "Teacher",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -536,6 +551,16 @@ namespace LMS.Infrastructure.Migrations
                 name: "IX_Lecture_CourseId",
                 table: "Lecture",
                 column: "CourseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LiveClass_CourserId",
+                table: "LiveClass",
+                column: "CourserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LiveClass_CreatorId",
+                table: "LiveClass",
+                column: "CreatorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Question_ExamId",

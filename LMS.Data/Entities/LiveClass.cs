@@ -10,15 +10,20 @@ namespace LMS.Domain.Entities
         public string Id { get; set; } = Guid.NewGuid().ToString();
         public string Name { get; set; }
         public DateTime StartDateTime { get; set; }
-        public DateTime EndDateTime { get; set; }
+        public double Duration { get; set; }
         public string Link { get; set; }
 
         public Status Status
         {
             get
             {
-                var now = DateTime.Now;
-                if (now >= EndDateTime)
+                // Egypt Standard Time
+                TimeZoneInfo egyptTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Egypt Standard Time");
+
+                // Convert to Egypt local time
+                var now = TimeZoneInfo.ConvertTime(DateTime.Now, egyptTimeZone);
+
+                if (now >= StartDateTime.AddHours(Duration))
                     return Status.Finished;
                 if (now >= StartDateTime)
                     return Status.Started;
@@ -27,7 +32,10 @@ namespace LMS.Domain.Entities
                 return Status.Pinding;
             }
         }
+
         public string CourserId { get; set; }
         public Course Course { get; set; }
+        public string CreatorId { get; set; }
+        public Teacher Creator { get; set; }
     }
 }

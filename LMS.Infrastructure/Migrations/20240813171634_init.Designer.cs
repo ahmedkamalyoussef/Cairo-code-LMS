@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LMS.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240813161701_editCourse")]
-    partial class editCourse
+    [Migration("20240813171634_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -142,7 +142,7 @@ namespace LMS.Infrastructure.Migrations
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Detauls")
+                    b.Property<string>("Details")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Image")
@@ -332,8 +332,12 @@ namespace LMS.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("EndDateTime")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("CreatorId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<double>("Duration")
+                        .HasColumnType("float");
 
                     b.Property<string>("Link")
                         .IsRequired()
@@ -349,6 +353,8 @@ namespace LMS.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CourserId");
+
+                    b.HasIndex("CreatorId");
 
                     b.ToTable("LiveClass");
                 });
@@ -704,7 +710,15 @@ namespace LMS.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("LMS.Data.Entities.Teacher", "Creator")
+                        .WithMany("LiveClasses")
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.Navigation("Course");
+
+                    b.Navigation("Creator");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -824,6 +838,8 @@ namespace LMS.Infrastructure.Migrations
             modelBuilder.Entity("LMS.Data.Entities.Teacher", b =>
                 {
                     b.Navigation("Courses");
+
+                    b.Navigation("LiveClasses");
                 });
 #pragma warning restore 612, 618
         }

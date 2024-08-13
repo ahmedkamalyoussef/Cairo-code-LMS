@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LMS.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240812004233_edit-live-class")]
-    partial class editliveclass
+    [Migration("20240813173949_ini")]
+    partial class ini
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -45,10 +45,6 @@ namespace LMS.Infrastructure.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Govenorate")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -141,6 +137,12 @@ namespace LMS.Infrastructure.Migrations
 
                     b.Property<string>("Code")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Details")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Image")
@@ -326,12 +328,16 @@ namespace LMS.Infrastructure.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("CourserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("CreatorId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("EndDateTime")
-                        .HasColumnType("datetime2");
+                    b.Property<double>("Duration")
+                        .HasColumnType("float");
 
                     b.Property<string>("Link")
                         .IsRequired()
@@ -344,7 +350,12 @@ namespace LMS.Infrastructure.Migrations
                     b.Property<DateTime>("StartDateTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("CourserId");
 
                     b.HasIndex("CreatorId");
 
@@ -517,6 +528,9 @@ namespace LMS.Infrastructure.Migrations
             modelBuilder.Entity("LMS.Data.Entities.Student", b =>
                 {
                     b.HasBaseType("LMS.Data.Entities.ApplicationUser");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
 
                     b.ToTable("Student", (string)null);
                 });
@@ -693,11 +707,19 @@ namespace LMS.Infrastructure.Migrations
 
             modelBuilder.Entity("LMS.Domain.Entities.LiveClass", b =>
                 {
+                    b.HasOne("LMS.Data.Entities.Course", "Course")
+                        .WithMany("LiveClasses")
+                        .HasForeignKey("CourserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("LMS.Data.Entities.Teacher", "Creator")
                         .WithMany("LiveClasses")
                         .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.Navigation("Course");
 
                     b.Navigation("Creator");
                 });
@@ -789,6 +811,8 @@ namespace LMS.Infrastructure.Migrations
                     b.Navigation("Exams");
 
                     b.Navigation("Lectures");
+
+                    b.Navigation("LiveClasses");
 
                     b.Navigation("StudentCourses");
                 });
