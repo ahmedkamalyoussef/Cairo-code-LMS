@@ -82,10 +82,12 @@ namespace LMS.Api.Controllers
         #endregion
 
         #region Refresh Token
+        [Authorize]
         [HttpGet("refresh-token")]
-        public async Task<IActionResult> RefreshTokenAsync()
+        public async Task<IActionResult> RefreshTokenAsync(string? refreshToken)
         {
-            var refreshToken = Request.Cookies["refreshToken"];
+            if (string.IsNullOrEmpty(refreshToken))
+                refreshToken = Request.Cookies["refreshToken"];
             if (string.IsNullOrEmpty(refreshToken))
             {
                 return BadRequest("Invalid Token");

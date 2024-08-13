@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace LMS.Application.Authentication
+﻿namespace LMS.Application.Authentication
 {
     public class AuthModel
     {
@@ -11,7 +9,7 @@ namespace LMS.Application.Authentication
         public List<string> Roles { get; set; }
         public string Token { get; set; }
         public IEnumerable<string> Errors { get; set; }
-        [JsonIgnore]
+        //[JsonIgnore]
         public string? RefreshToken { get; set; }
         public DateTime RefreshTokenExpiration { get; set; }
     }
