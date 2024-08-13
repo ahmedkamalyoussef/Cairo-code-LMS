@@ -91,15 +91,36 @@ namespace LMS.Application.Services
 
         }
 
-        public async Task<List<CourseResultDTO>> GetAllCourses()
+        public async Task<List<CourseResultDTO>> GetAcademicCourses()
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
-            var courses = await _unitOfWork.Courses.GetAllAsync(orderBy: course => course.Name,
+            var courses = await _unitOfWork.AcademicCourses.GetAllAsync(orderBy: course => course.Name,
             direction: OrderDirection.Ascending,
             includes:
             [
                 course => course.Teacher,
             ]);
+            var coursesResult = _mapper.Map<IEnumerable<CourseResultDTO>>(courses).ToList();
+            foreach (var course in coursesResult)
+            {
+                var evaluations = await _unitOfWork.Evaluations.FindAsync(e => e.CourseId == course.Id);
+                course.Evaluation = CalculateAverageRate(evaluations.ToList());
+                var studentCuorse = await _unitOfWork.StudentCourses.FindFirstAsync(sc => sc.CourseId == course.Id && sc.StudentId == currentUser.Id);
+                if (studentCuorse != null) course.IsEnrolled = true;
+                else course.IsEnrolled = false;
+            }
+            return coursesResult;
+        }
+
+        public async Task<List<CourseResultDTO>> GetNonAcademicCourses()
+        {
+            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
+            var courses = await _unitOfWork.NonAcademicCourses.GetAllAsync(orderBy: course => course.Name,
+                direction: OrderDirection.Ascending,
+                includes:
+                [
+                    course => course.Teacher,
+                ]);
             var coursesResult = _mapper.Map<IEnumerable<CourseResultDTO>>(courses).ToList();
             foreach (var course in coursesResult)
             {
@@ -163,19 +184,39 @@ namespace LMS.Application.Services
             return studentCourses.Count();
         }
 
-        public async Task<List<CourseResultDTO>> SearchForCources(string subject, string semester, double from, double to, int pageSize, int pageIndex)
+        public async Task<List<CourseResultDTO>> SearchForCources(string subject, string semester, double from, double to, int pageSize, int pageIndex, bool academic = true, bool nonAcademic = true)
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
-            var courses = await _unitOfWork.Courses.FilterAsync(pageSize, pageIndex, [c =>  c.Name.Contains(subject)
-            ||  subject.Contains(c.Name),
-                c => c.Price >= from && c.Price <= to
-            ],
-            orderBy: course => course.Name,
-            direction: OrderDirection.Descending,
-            includes:
-            [
-                c => c.Teacher
-            ]);
+            List<Course> courses = [];
+            if (academic)
+            {
+                var filteredAcademic = await _unitOfWork.AcademicCourses.FilterAsync(pageSize, pageIndex, [c => c.MaterialName.Contains(subject) || c.Name.Contains(subject)
+                        || subject.Contains(c.MaterialName) || subject.Contains(c.Name),
+                    c => semester.Contains(c.Semester) || c.Semester.Contains(semester),
+                    c => c.Price >= from && c.Price <= to
+                ],
+                orderBy: course => course.Name,
+                direction: OrderDirection.Descending,
+                includes:
+                [
+                    c => c.Teacher
+                ]);
+                courses.AddRange(filteredAcademic.ToList());
+            }
+            if (nonAcademic)
+            {
+                var filteredNonAcademic = await _unitOfWork.NonAcademicCourses.FilterAsync(pageSize, pageIndex, [c =>c.Name.Contains(subject)
+                            || subject.Contains(c.Name),
+                        c => c.Price >= from && c.Price <= to
+                    ],
+                    orderBy: course => course.Name,
+                    direction: OrderDirection.Descending,
+                    includes:
+                    [
+                        c => c.Teacher
+                    ]);
+                courses.AddRange(filteredNonAcademic.ToList());
+            }
             var coursesResult = _mapper.Map<IEnumerable<CourseResultDTO>>(courses).ToList();
             foreach (var course in coursesResult)
             {

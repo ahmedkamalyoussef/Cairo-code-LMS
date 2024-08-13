@@ -55,18 +55,23 @@ namespace LMS.Api.Controllers
 
 
         [Authorize]
-        [HttpGet("all")]
-        public async Task<IActionResult> GetAllCourses()
+        [HttpGet("all-academic")]
+        public async Task<IActionResult> GetAllAcademicCourses()
         {
-            return Ok(await _courseService.GetAllCourses());
+            return Ok(await _courseService.GetAcademicCourses());
         }
-
+        [Authorize]
+        [HttpGet("all-non-academic")]
+        public async Task<IActionResult> GetAllNonAcademicCourses()
+        {
+            return Ok(await _courseService.GetNonAcademicCourses());
+        }
 
         [Authorize]
         [HttpGet("filter")]
-        public async Task<IActionResult> GetCoursesByCrateria(string subject, int pageSize, int pageindex, string? semester = "", double from = 0, double to = double.MaxValue)
+        public async Task<IActionResult> GetCoursesByCrateria(string subject, int pageSize, int pageindex, string? semester = "", double from = 0, double to = double.MaxValue, bool academic = true, bool nonAcademic = true)
         {
-            return Ok(await _courseService.SearchForCources(subject, semester, from, to, pageSize, pageindex));
+            return Ok(await _courseService.SearchForCources(subject, semester, from, to, pageSize, pageindex, academic, nonAcademic));
         }
 
 
