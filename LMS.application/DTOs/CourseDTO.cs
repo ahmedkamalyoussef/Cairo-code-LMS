@@ -8,6 +8,7 @@
         public string Level { get; set; }
         public string Semester { get; set; }
         public double Price { get; set; }
-
+        public string? Content { get; set; }
+        public string? Detauls { get; set; }
     }
 }

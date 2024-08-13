@@ -16,6 +16,8 @@ namespace LMS.Data.Entities
         public string Semester { get; set; }
         public double Price { get; set; }
         public string TeacherId { get; set; }
+        public string? Content { get; set; }
+        public string? Detauls { get; set; }
         public string Code { get; set; } = random.Next(10000, 100000).ToString();
         public Teacher Teacher { get; set; }
         public ICollection<StudentCourse>? StudentCourses { get; set; } = new HashSet<StudentCourse>();
