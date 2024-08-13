@@ -27,9 +27,12 @@ namespace LMS.Application.Mapper
             #endregion
 
             #region Course
-            CreateMap<CourseDTO, Course>();
-            CreateMap<EditCourseDTO, Course>();
-            CreateMap<Course, CourseResultDTO>();
+            CreateMap<CourseDTO, AcademicCourse>();
+            CreateMap<EditCourseDTO, AcademicCourse>();
+            CreateMap<AcademicCourse, CourseResultDTO>();
+            CreateMap<CourseDTO, NonAcademicCourse>();
+            CreateMap<EditCourseDTO, NonAcademicCourse>();
+            CreateMap<NonAcademicCourse, CourseResultDTO>();
             //.ForMember(dest => dest.Evaluation, opt => opt.MapFrom(src => CalculateAverageRate(src)));
             #endregion
 

@@ -13,7 +13,8 @@ namespace LMS.Infrastructure.Data
         public DbSet<Teacher> Teacher { get; set; }
         public DbSet<Student> Student { get; set; }
         public DbSet<Admin> Admin { get; set; }
-        public DbSet<Course> Course { get; set; }
+        public DbSet<AcademicCourse> AcademicCourse { get; set; }
+        public DbSet<NonAcademicCourse> NonAcademicCourse { get; set; }
         public DbSet<StudentCourse> StudentCourse { get; set; }
         public DbSet<LiveClass> LiveClass { get; set; }
 
@@ -24,7 +25,8 @@ namespace LMS.Infrastructure.Data
             modelBuilder.Entity<Teacher>().ToTable("Teacher");
             modelBuilder.Entity<Student>().ToTable("Student");
             modelBuilder.Entity<Admin>().ToTable("Admin");
-
+            modelBuilder.Entity<AcademicCourse>().ToTable("AcademicCourse");
+            modelBuilder.Entity<NonAcademicCourse>().ToTable("NonAcademicCourse");
             #region Student
             new StudentEntityTypeConfiguration().Configure(modelBuilder.Entity<Student>());
             #endregion

@@ -6,6 +6,7 @@ using LMS.Data.Consts;
 using LMS.Data.Entities;
 using LMS.Data.IGenericRepository_IUOW;
 using LMS.Domain.Consts;
+using LMS.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 
 namespace LMS.Application.Services
@@ -18,31 +19,42 @@ namespace LMS.Application.Services
         public async Task<bool> CreateCourse(CourseDTO courseDto, IFormFile img)
         {
             var teacher = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
-            var course = _mapper.Map<Course>(courseDto);
+            Course course = courseDto.Category switch
+            {
+                Category.Academic => _mapper.Map<AcademicCourse>(courseDto),
+                Category.NonAcademic => _mapper.Map<NonAcademicCourse>(courseDto),
+            };
             course.TeacherId = teacher.Id;
             if (img != null)
                 course.Image = await _userHelpers.AddFileAsync(img, Folder.Image);
-            //course.Image = await _cloudinaryService.UploadImageAsync(courseDto.CourseImage);
-            await _unitOfWork.Courses.AddAsync(course);
+            if (course.Category == Category.Academic)
+                await _unitOfWork.AcademicCourses.AddAsync((AcademicCourse)course);
+            else
+                await _unitOfWork.NonAcademicCourses.AddAsync((NonAcademicCourse)course);
             return await _unitOfWork.SaveAsync() > 0;
         }
         public async Task<bool> UpdateCourse(string id, EditCourseDTO courseDTO, IFormFile? img)
         {
             _ = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
-            var course = await _unitOfWork.Courses.FindFirstAsync(c => c.Id == id) ?? throw new Exception("course not found");
+            Course course = courseDTO.Category switch
+            {
+                Category.Academic => await _unitOfWork.AcademicCourses.FindFirstAsync(c => c.Id == id) ?? throw new Exception("course not found"),
+                Category.NonAcademic => await _unitOfWork.NonAcademicCourses.FindFirstAsync(c => c.Id == id) ?? throw new Exception("course not found")
+            };
             var oldImgPath = course.Image;
             _mapper.Map(courseDTO, course);
             if (img != null)
             {
                 course.Image = await _userHelpers.AddFileAsync(img, Folder.Image);
-                //course.Image = await _cloudinaryService.UploadImageAsync(courseDTO.CourseImage);
             }
-            await _unitOfWork.Courses.UpdateAsync(course);
+            if (course.Category == Category.Academic)
+                await _unitOfWork.AcademicCourses.UpdateAsync((AcademicCourse)course);
+            else
+                await _unitOfWork.NonAcademicCourses.UpdateAsync((NonAcademicCourse)course);
             if (await _unitOfWork.SaveAsync() > 0)
             {
                 if (oldImgPath != null && img != null)
                     await _userHelpers.DeleteFileAsync(oldImgPath, Folder.Image);
-                //await _cloudinaryService.DeleteImageAsync(oldImgPath);
                 return true;
             }
             return false;
@@ -58,7 +70,6 @@ namespace LMS.Application.Services
             {
                 if (oldImgPath != null)
                     await _userHelpers.DeleteFileAsync(oldImgPath, Folder.Image);
-                //await _cloudinaryService.DeleteImageAsync(oldImgPath);
                 foreach (Book book in course.Books)
                     await _userHelpers.DeleteFileAsync(book.BookUrl, Folder.Book);
                 foreach (Lecture lecture in course.Lectures)
@@ -155,9 +166,8 @@ namespace LMS.Application.Services
         public async Task<List<CourseResultDTO>> SearchForCources(string subject, string semester, double from, double to, int pageSize, int pageIndex)
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
-            var courses = await _unitOfWork.Courses.FilterAsync(pageSize, pageIndex, [c => c.MaterialName.Contains(subject) || c.Name.Contains(subject)
-            || subject.Contains(c.MaterialName) || subject.Contains(c.Name),
-                c => semester.Contains(c.Semester) || c.Semester.Contains(semester),
+            var courses = await _unitOfWork.Courses.FilterAsync(pageSize, pageIndex, [c =>  c.Name.Contains(subject)
+            ||  subject.Contains(c.Name),
                 c => c.Price >= from && c.Price <= to
             ],
             orderBy: course => course.Name,

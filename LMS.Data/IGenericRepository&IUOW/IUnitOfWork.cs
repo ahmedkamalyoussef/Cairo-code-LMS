@@ -10,6 +10,8 @@ namespace LMS.Data.IGenericRepository_IUOW
         IGenericRepository<Teacher> Teachers { get; set; }
         IGenericRepository<Admin> Admins { get; set; }
         IGenericRepository<Course> Courses { get; set; }
+        IGenericRepository<AcademicCourse> AcademicCourses { get; set; }
+        IGenericRepository<NonAcademicCourse> NonAcademicCourses { get; set; }
         IGenericRepository<Exam> Exams { get; set; }
         IGenericRepository<Book> Books { get; set; }
         IGenericRepository<Lecture> Lectures { get; set; }

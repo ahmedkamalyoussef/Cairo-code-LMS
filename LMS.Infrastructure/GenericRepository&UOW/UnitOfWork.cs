@@ -26,6 +26,8 @@ namespace LMS.Infrastructure.GenericRepository_UOW
         public IGenericRepository<ExamResult> ExamResults { get; set; }
         public IGenericRepository<Evaluation> Evaluations { get; set; }
         public IGenericRepository<LiveClass> LiveClasses { get; set; }
+        public IGenericRepository<AcademicCourse> AcademicCourses { get; set; }
+        public IGenericRepository<NonAcademicCourse> NonAcademicCourses { get; set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -44,6 +46,8 @@ namespace LMS.Infrastructure.GenericRepository_UOW
             Evaluations = new GenericRepository<Evaluation>(_context);
             Users = new GenericRepository<ApplicationUser>(_context);
             LiveClasses = new GenericRepository<LiveClass>(_context);
+            AcademicCourses = new GenericRepository<AcademicCourse>(_context);
+            NonAcademicCourses = new GenericRepository<NonAcademicCourse>(_context);
         }
 
         public async Task CreateTransactionAsync()
