@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using LMS.Domain.Entities;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LMS.Data.Entities
 {
@@ -22,5 +23,6 @@ namespace LMS.Data.Entities
         public ICollection<Lecture>? Lectures { get; set; } = new HashSet<Lecture>();
         public ICollection<Exam>? Exams { get; set; } = new HashSet<Exam>();
         public ICollection<Evaluation>? Evaluations { get; set; } = new HashSet<Evaluation>();
+        public ICollection<LiveClass>? LiveClasses { get; set; }
     }
 }

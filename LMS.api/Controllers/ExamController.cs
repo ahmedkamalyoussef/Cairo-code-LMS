@@ -12,7 +12,6 @@ namespace LMS.Api.Controllers
     {
         private readonly IExamService _examService = examService;
 
-
         [Authorize(Roles = ConstRoles.Teacher)]
         [HttpPost]
         public async Task<IActionResult> CreateExam(ExamDTO examDto)

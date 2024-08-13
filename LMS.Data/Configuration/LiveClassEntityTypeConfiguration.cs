@@ -9,9 +9,9 @@ namespace LMS.Domain.Configuration
         public void Configure(EntityTypeBuilder<LiveClass> builder)
         {
             builder
-                .HasOne(a => a.Creator)
+                .HasOne(a => a.Course)
                 .WithMany(q => q.LiveClasses)
-                .HasForeignKey(a => a.CreatorId)
+                .HasForeignKey(a => a.CourserId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

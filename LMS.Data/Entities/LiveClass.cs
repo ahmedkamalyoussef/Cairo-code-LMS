@@ -27,7 +27,7 @@ namespace LMS.Domain.Entities
                 return Status.Pinding;
             }
         }
-        public string CreatorId { get; set; }
-        public Teacher Creator { get; set; }
+        public string CourserId { get; set; }
+        public Course Course { get; set; }
     }
 }

@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using LMS.Data.Entities;
 using Microsoft.EntityFrameworkCore;
-using LMS.Data.Entities;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LMS.Domain.Configuration
 {
@@ -8,11 +8,11 @@ namespace LMS.Domain.Configuration
     {
         public void Configure(EntityTypeBuilder<Student> builder)
         {
-            builder
-                .HasMany(sc => sc.StudentCourses)
-                .WithOne(s => s.Student)
-                .HasForeignKey(s => s.StudentId)
-                .OnDelete(DeleteBehavior.NoAction);
+            //builder
+            //    .HasMany(sc => sc.StudentCourses)
+            //    .WithOne(s => s.Student)
+            //    .HasForeignKey(s => s.StudentId)
+            //    .OnDelete(DeleteBehavior.NoAction);
             builder
                 .HasMany(s => s.ExamResults)
                 .WithOne(e => e.Student)

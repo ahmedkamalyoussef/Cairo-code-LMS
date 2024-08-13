@@ -25,7 +25,7 @@ namespace LMS.Api.Controllers
         [HttpPut("image")]
         public async Task<IActionResult> UpdateImage(IFormFile newImage)
         {
-            var result = await _studentService.EditStudentImage(newImage);
+            bool result = await _studentService.EditStudentImage(newImage);
             return result ? Ok("updated successfully") : BadRequest("failed to update");
 
         }
