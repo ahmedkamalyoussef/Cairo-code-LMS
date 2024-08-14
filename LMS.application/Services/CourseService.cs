@@ -16,6 +16,18 @@ namespace LMS.Application.Services
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IMapper _mapper = mapper;
         private readonly IUserHelpers _userHelpers = userHelpers;
+        public async Task<List<CourseResultDTO>> GetTopAcademicCourses(int count)
+        {
+            var topAcademicCourses = await _unitOfWork.AcademicCourses.FindTopAsync(c => c.StudentCourses.Count, includes: [c => c.Teacher], take: count);
+            var coursesResult = _mapper.Map<IEnumerable<CourseResultDTO>>(topAcademicCourses).ToList();
+            return coursesResult;
+        }
+        public async Task<List<CourseResultDTO>> GetTopNonAcademicCourses(int count)
+        {
+            var topNonAcademicCourses = await _unitOfWork.NonAcademicCourses.FindTopAsync(c => c.StudentCourses.Count, includes: [c => c.Teacher], take: count);
+            var coursesResult = _mapper.Map<IEnumerable<CourseResultDTO>>(topNonAcademicCourses).ToList();
+            return coursesResult;
+        }
         public async Task<bool> CreateCourse(CourseDTO courseDto, IFormFile img)
         {
             var teacher = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");

@@ -66,7 +66,18 @@ namespace LMS.Api.Controllers
         {
             return Ok(await _courseService.GetNonAcademicCourses());
         }
-
+        [Authorize]
+        [HttpGet("top-academic")]
+        public async Task<IActionResult> GetTopAcademicCourses(int take)
+        {
+            return Ok(await _courseService.GetTopAcademicCourses(take));
+        }
+        [Authorize]
+        [HttpGet("top-non-academic")]
+        public async Task<IActionResult> GetTopNonAcademicCourses(int take)
+        {
+            return Ok(await _courseService.GetTopNonAcademicCourses(take));
+        }
         [Authorize]
         [HttpGet("filter")]
         public async Task<IActionResult> GetCoursesByCrateria(string subject, int pageSize, int pageindex, string? semester = "", double from = 0, double to = double.MaxValue, bool academic = true, bool nonAcademic = true)

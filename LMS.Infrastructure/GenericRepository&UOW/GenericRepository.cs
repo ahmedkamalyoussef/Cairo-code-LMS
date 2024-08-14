@@ -61,6 +61,29 @@ namespace LMS.Infrastructure.GenericRepository_UOW
 
             return await query.ToListAsync();
         }
+
+        public async Task<IEnumerable<T>> FindTopAsync(
+            Expression<Func<T, int>> countSelector,
+            List<Expression<Func<T, object>>> includes = null,
+            int take = 5)
+        {
+            IQueryable<T> query = _context.Set<T>().AsNoTracking();
+
+            // Include related entities
+            if (includes != null)
+            {
+                foreach (var include in includes)
+                {
+                    query = query.Include(include);
+                }
+            }
+
+            // Order by the count of the related entity and take the top results
+            query = query.OrderByDescending(countSelector).Take(take);
+
+            return await query.ToListAsync();
+        }
+
         public async Task<T> FindFirstAsync(Expression<Func<T, bool>> expression, List<Expression<Func<T, object>>> includes = null)
         {
             IQueryable<T> query = _context.Set<T>().Where(expression);
