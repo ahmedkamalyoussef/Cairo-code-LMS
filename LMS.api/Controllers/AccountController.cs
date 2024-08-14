@@ -24,6 +24,7 @@ namespace LMS.Api.Controllers
             return result ? Ok("account has been updated successfully") : BadRequest("user not found");
         }
         #endregion
+
         #region get current user
         [Authorize]
         [HttpGet("user")]
