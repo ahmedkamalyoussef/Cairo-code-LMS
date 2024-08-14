@@ -4,6 +4,7 @@ using LMS.Application.Helpers;
 using LMS.Application.Interfaces;
 using LMS.Data.IGenericRepository_IUOW;
 using LMS.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace LMS.Application.Services
 {
@@ -40,9 +41,16 @@ namespace LMS.Application.Services
         }
 
 
-        public Task<List<LiveClassDTO>> GeStudentLiveClasses()
+        public async Task<List<LiveClassDTO>> GeStudentLiveClasses()
         {
-            throw new NotImplementedException();
+            var student = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
+            var studentCourses = await _unitOfWork.StudentCourses.FindAsync(c => c.StudentId == student.Id
+                , null, null, includes: [c => c.Course],
+                thenIncludes: [query => query.Include(c => c.Course).ThenInclude(course => course.LiveClasses)]);
+            var courses = studentCourses.Select(c => c.Course);
+            var liveClasses = courses.SelectMany(c => c.LiveClasses);
+            var liveClassResult = _mapper.Map<IEnumerable<LiveClassDTO>>(liveClasses).ToList();
+            return liveClassResult;
         }
 
         public async Task<List<LiveClassDTO>> GetCurrentTeacherLiveClasses()
