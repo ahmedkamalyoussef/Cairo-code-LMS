@@ -2,6 +2,7 @@
 using LMS.Data.IGenericRepository_IUOW;
 using LMS.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
 namespace LMS.Infrastructure.GenericRepository_UOW
@@ -21,23 +22,42 @@ namespace LMS.Infrastructure.GenericRepository_UOW
             await _context.Set<T>().AddRangeAsync(entities);
         }
 
-        public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> expression, Expression<Func<T, object>>? orderBy = null, string direction = null, List<Expression<Func<T, object>>> includes = null)
+        public async Task<IEnumerable<T>> FindAsync(
+            Expression<Func<T, bool>> expression,
+            Expression<Func<T, object>>? orderBy = null,
+            string direction = null,
+            List<Expression<Func<T, object>>> includes = null,
+            List<Func<IQueryable<T>, IIncludableQueryable<T, object>>> thenIncludes = null)
         {
             IQueryable<T> query = _context.Set<T>().Where(expression);
 
             if (orderBy != null)
             {
-                if (direction == OrderDirection.Descending)
-                    query = query.OrderBy(orderBy);
-                else
-                    query = query.OrderByDescending(orderBy);
+                query = direction == OrderDirection.Descending
+                    ? query.OrderByDescending(orderBy)
+                    : query.OrderBy(orderBy);
             }
+
             if (includes != null)
+            {
                 foreach (var include in includes)
+                {
                     query = query.Include(include);
+                }
+            }
+
+            if (thenIncludes != null)
+            {
+                foreach (var thenInclude in thenIncludes)
+                {
+                    query = thenInclude(query);
+                }
+            }
 
             return await query.ToListAsync();
         }
+
+
         public async Task<IEnumerable<T>> FilterAsync(int pageSize, int pageIndex, List<Expression<Func<T, bool>>> expressions, Expression<Func<T, object>> orderBy = null, string direction = null, List<Expression<Func<T, object>>> includes = null)
         {
             IQueryable<T> query = _context.Set<T>().AsNoTracking();
