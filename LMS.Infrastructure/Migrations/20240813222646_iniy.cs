@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace LMS.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class iniy : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -244,15 +244,13 @@ namespace LMS.Infrastructure.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MaterialName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Image = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Level = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Semester = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Price = table.Column<double>(type: "float", nullable: false),
-                    TeacherId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Details = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Category = table.Column<int>(type: "int", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TeacherId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -261,6 +259,26 @@ namespace LMS.Infrastructure.Migrations
                         name: "FK_Course_Teacher_TeacherId",
                         column: x => x.TeacherId,
                         principalTable: "Teacher",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AcademicCourse",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    MaterialName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Level = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Semester = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AcademicCourse", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AcademicCourse_Course_Id",
+                        column: x => x.Id,
+                        principalTable: "Course",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -375,6 +393,23 @@ namespace LMS.Infrastructure.Migrations
                         column: x => x.CreatorId,
                         principalTable: "Teacher",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "NonAcademicCourse",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NonAcademicCourse", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_NonAcademicCourse_Course_Id",
+                        column: x => x.Id,
+                        principalTable: "Course",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -577,6 +612,9 @@ namespace LMS.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "AcademicCourse");
+
+            migrationBuilder.DropTable(
                 name: "Admin");
 
             migrationBuilder.DropTable(
@@ -611,6 +649,9 @@ namespace LMS.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "LiveClass");
+
+            migrationBuilder.DropTable(
+                name: "NonAcademicCourse");
 
             migrationBuilder.DropTable(
                 name: "RefreshToken");

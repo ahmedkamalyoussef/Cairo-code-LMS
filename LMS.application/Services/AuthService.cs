@@ -199,12 +199,6 @@ namespace LMS.Application.Services
             if (user == null)
                 return IdentityResult.Failed(new IdentityError { Description = "User not found" });
 
-            if (user.OTP != changePassword.OTP || user.OTPExpiry < DateTime.UtcNow)
-                return IdentityResult.Failed(new IdentityError { Description = "Invalid or expired OTP" });
-
-            user.OTP = null;
-            user.OTPExpiry = DateTime.MinValue;
-
             var result = await _userManager.ChangePasswordAsync(user, changePassword.CurrentPassword, changePassword.NewPassword);
             await _userManager.UpdateAsync(user);
 

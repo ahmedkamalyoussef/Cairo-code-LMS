@@ -82,9 +82,8 @@ namespace LMS.Api.Controllers
         #endregion
 
         #region Refresh Token
-        [Authorize]
-        [HttpGet("refresh-token")]
-        public async Task<IActionResult> RefreshTokenAsync(string? refreshToken)
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshTokenAsync([FromBody]string? refreshToken)
         {
             if (string.IsNullOrEmpty(refreshToken))
                 refreshToken = Request.Cookies["refreshToken"];
@@ -135,6 +134,7 @@ namespace LMS.Api.Controllers
         #region forget & reset & change password
 
         [HttpPut("change-password")]
+        [Authorize]
         public async Task<IActionResult> ChangePassword(ChangePassword changePassword)
         {
             var result = await _authService.ChangePasswordAsync(changePassword);
