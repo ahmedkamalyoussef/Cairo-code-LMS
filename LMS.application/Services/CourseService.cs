@@ -246,14 +246,15 @@ namespace LMS.Application.Services
             return studentCourses.Count();
         }
 
-        public async Task<List<CourseResultDTO>> SearchForCources(string subject, string semester, double from, double to, int pageSize, int pageIndex, bool academic = true, bool nonAcademic = true)
+        public async Task<List<CourseResultDTO>> SearchForCources(string subject, string semester, string level, double from, double to, int pageSize, int pageIndex, bool academic = true, bool nonAcademic = true)
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync();
             List<Course> courses = [];
             if (academic)
             {
-                var filteredAcademic = await _unitOfWork.AcademicCourses.FilterAsync(pageSize, pageIndex, [c => c.MaterialName.Contains(subject) || c.Name.Contains(subject)
-                        || subject.Contains(c.MaterialName) || subject.Contains(c.Name),
+                var filteredAcademic = await _unitOfWork.AcademicCourses.FilterAsync(pageSize, pageIndex, [c =>
+                            c.MaterialName.Contains(subject) || c.Name.Contains(subject)
+                        || subject.Contains(c.MaterialName) || subject.Contains(c.Name)||c.Level.Contains(level)||level.Contains(c.Level),
                     c => semester.Contains(c.Semester) || c.Semester.Contains(semester),
                     c => c.Price >= from && c.Price <= to
                 ],
