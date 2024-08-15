@@ -80,7 +80,7 @@ namespace LMS.Api.Controllers
         }
         [Authorize]
         [HttpGet("filter")]
-        public async Task<IActionResult> GetCoursesByCrateria(string subject, int pageSize, int pageindex, string? semester = "", double from = 0, double to = double.MaxValue, bool academic = true, bool nonAcademic = true)
+        public async Task<IActionResult> GetCoursesByCrateria(int pageSize, int pageindex, string? subject = "", string? semester = "", double from = 0, double to = double.MaxValue, bool academic = true, bool nonAcademic = true)
         {
             return Ok(await _courseService.SearchForCources(subject, semester, from, to, pageSize, pageindex, academic, nonAcademic));
         }
