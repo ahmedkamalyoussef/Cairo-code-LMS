@@ -246,7 +246,7 @@ namespace LMS.Application.Services
             return studentCourses.Count();
         }
 
-        public async Task<List<CourseResultDTO>> SearchForCources(string subject, string semester, string level, double from, double to, int pageSize, int pageIndex, bool academic = true, bool nonAcademic = true)
+        public async Task<Tuple<List<CourseResultDTO>, int>> SearchForCources(string subject, string semester, string level, double from, double to, int pageSize, int pageIndex, bool academic = true, bool nonAcademic = true)
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync();
             List<Course> courses = [];
@@ -295,7 +295,7 @@ namespace LMS.Application.Services
                     else course.IsEnrolled = false;
                 }
             }
-            return coursesResult;
+            return Tuple.Create(coursesResult, coursesResult.Count);
         }
 
 

@@ -77,7 +77,15 @@ namespace LMS.Api.Controllers
         [HttpGet("filter")]
         public async Task<IActionResult> GetCoursesByCrateria(string subject, int pageSize, int pageindex, string? semester = "", string level = "", double from = 0, double to = double.MaxValue, bool academic = true, bool nonAcademic = true)
         {
-            return Ok(await _courseService.SearchForCources(subject, semester, level, from, to, pageSize, pageindex, academic, nonAcademic));
+            var result = await _courseService.SearchForCources(subject, semester, level, from, to, pageSize, pageindex,
+                academic, nonAcademic);
+            int coursesCount = result.Item2;
+            var courses = result.Item1;
+            return Ok(new
+            {
+                courses,
+                coursesCount
+            });
         }
 
 
