@@ -54,31 +54,26 @@ namespace LMS.Api.Controllers
         }
 
 
-        [Authorize]
         [HttpGet("all-academic")]
         public async Task<IActionResult> GetAllAcademicCourses()
         {
             return Ok(await _courseService.GetAcademicCourses());
         }
-        [Authorize]
         [HttpGet("all-non-academic")]
         public async Task<IActionResult> GetAllNonAcademicCourses()
         {
             return Ok(await _courseService.GetNonAcademicCourses());
         }
-        [Authorize]
         [HttpGet("top-academic")]
         public async Task<IActionResult> GetTopAcademicCourses(int take)
         {
             return Ok(await _courseService.GetTopAcademicCourses(take));
         }
-        [Authorize]
         [HttpGet("top-non-academic")]
         public async Task<IActionResult> GetTopNonAcademicCourses(int take)
         {
             return Ok(await _courseService.GetTopNonAcademicCourses(take));
         }
-        [Authorize]
         [HttpGet("filter")]
         public async Task<IActionResult> GetCoursesByCrateria(string subject, int pageSize, int pageindex, string? semester = "", double from = 0, double to = double.MaxValue, bool academic = true, bool nonAcademic = true)
         {
@@ -86,7 +81,6 @@ namespace LMS.Api.Controllers
         }
 
 
-        [Authorize]
         [HttpGet("by-id")]
         public async Task<IActionResult> GetCourse(string id)
         {
@@ -95,13 +89,17 @@ namespace LMS.Api.Controllers
         }
 
 
-        [Authorize]
         [HttpGet("teacher-courses")]
         public async Task<IActionResult> GetCoursesByTeacherId(string teacherId)
         {
             return Ok(await _courseService.GetCoursesByTeacherId(teacherId));
         }
-
+        [Authorize]
+        [HttpGet("student-courses")]
+        public async Task<IActionResult> GetCoursesByStudentId(string studentId)
+        {
+            return Ok(await _courseService.GetCoursesByStudentId(studentId));
+        }
 
         [HttpGet("count")]
         public async Task<IActionResult> GetNumberOfCourses()
@@ -110,7 +108,6 @@ namespace LMS.Api.Controllers
         }
 
 
-        [Authorize]
         [HttpGet("students-count-in-course")]
         public async Task<IActionResult> GetStudentCountInCourse(string courseId)
         {
