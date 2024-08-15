@@ -48,7 +48,7 @@ namespace LMS.Api.Controllers
 
         [Authorize]
         [HttpGet("all-in-course")]
-        public async Task<IActionResult> GetCourseExams(string courseId, int pageSize, int pageindex)
+        public async Task<IActionResult> GetCourseExams(string courseId, int pageSize = 5, int pageindex = 1)
         {
             return Ok(await _examService.GetCourseExams(courseId, pageSize, pageindex));
         }

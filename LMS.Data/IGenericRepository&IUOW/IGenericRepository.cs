@@ -19,6 +19,13 @@ namespace LMS.Data.IGenericRepository_IUOW
             string direction = null,
             List<Expression<Func<T, object>>> includes = null,
             List<Func<IQueryable<T>, IIncludableQueryable<T, object>>> thenIncludes = null);
+        Task<IEnumerable<T>> FindWithPaginationAsync(
+            int pageSize, int pageIndex,
+            Expression<Func<T, bool>> expression,
+            Expression<Func<T, object>>? orderBy = null,
+            string direction = null,
+            List<Expression<Func<T, object>>> includes = null,
+            List<Func<IQueryable<T>, IIncludableQueryable<T, object>>> thenIncludes = null);
         Task<IEnumerable<T>> FilterAsync(int pageSize, int pageIndex, List<Expression<Func<T, bool>>> expressions, Expression<Func<T, object>> orderBy = null, string direction = null, List<Expression<Func<T, object>>> includes = null);
 
         Task<IEnumerable<T>> FindTopAsync(
