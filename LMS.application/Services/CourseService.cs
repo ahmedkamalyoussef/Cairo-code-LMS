@@ -105,7 +105,7 @@ namespace LMS.Application.Services
 
         public async Task<List<CourseResultDTO>> GetAcademicCourses()
         {
-            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
+            var currentUser = await _userHelpers.GetCurrentUserAsync();
             var courses = await _unitOfWork.AcademicCourses.GetAllAsync(orderBy: course => course.Name,
             direction: OrderDirection.Ascending,
             includes:
@@ -117,16 +117,22 @@ namespace LMS.Application.Services
             {
                 var evaluations = await _unitOfWork.Evaluations.FindAsync(e => e.CourseId == course.Id);
                 course.Evaluation = CalculateAverageRate(evaluations.ToList());
-                var studentCuorse = await _unitOfWork.StudentCourses.FindFirstAsync(sc => sc.CourseId == course.Id && sc.StudentId == currentUser.Id);
-                if (studentCuorse != null) course.IsEnrolled = true;
-                else course.IsEnrolled = false;
+            }
+            if (currentUser != null)
+            {
+                foreach (var course in coursesResult)
+                {
+                    var studentCuorse = await _unitOfWork.StudentCourses.FindFirstAsync(sc => sc.CourseId == course.Id && sc.StudentId == currentUser.Id);
+                    if (studentCuorse != null) course.IsEnrolled = true;
+                    else course.IsEnrolled = false;
+                }
             }
             return coursesResult;
         }
 
         public async Task<List<CourseResultDTO>> GetNonAcademicCourses()
         {
-            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
+            var currentUser = await _userHelpers.GetCurrentUserAsync();
             var courses = await _unitOfWork.NonAcademicCourses.GetAllAsync(orderBy: course => course.Name,
                 direction: OrderDirection.Ascending,
                 includes:
@@ -138,16 +144,22 @@ namespace LMS.Application.Services
             {
                 var evaluations = await _unitOfWork.Evaluations.FindAsync(e => e.CourseId == course.Id);
                 course.Evaluation = CalculateAverageRate(evaluations.ToList());
-                var studentCuorse = await _unitOfWork.StudentCourses.FindFirstAsync(sc => sc.CourseId == course.Id && sc.StudentId == currentUser.Id);
-                if (studentCuorse != null) course.IsEnrolled = true;
-                else course.IsEnrolled = false;
+            }
+            if (currentUser != null)
+            {
+                foreach (var course in coursesResult)
+                {
+                    var studentCuorse = await _unitOfWork.StudentCourses.FindFirstAsync(sc => sc.CourseId == course.Id && sc.StudentId == currentUser.Id);
+                    if (studentCuorse != null) course.IsEnrolled = true;
+                    else course.IsEnrolled = false;
+                }
             }
             return coursesResult;
         }
 
         public async Task<CourseResultDTO> GetCourse(string id)
         {
-            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
+            var currentUser = await _userHelpers.GetCurrentUserAsync();
             var course = await _unitOfWork.Courses.FindFirstAsync(c => c.Id == id,
             includes:
             [
@@ -157,15 +169,18 @@ namespace LMS.Application.Services
             ]);
             var coursesResult = _mapper.Map<CourseResultDTO>(course);
             coursesResult.Evaluation = CalculateAverageRate(course.Evaluations.ToList());
-            var studentCuorse = await _unitOfWork.StudentCourses.FindFirstAsync(sc => sc.CourseId == course.Id && sc.StudentId == currentUser.Id);
-            if (studentCuorse != null) coursesResult.IsEnrolled = true;
-            else coursesResult.IsEnrolled = false;
+            if (currentUser != null)
+            {
+                var studentCuorse = await _unitOfWork.StudentCourses.FindFirstAsync(sc => sc.CourseId == course.Id && sc.StudentId == currentUser.Id);
+                if (studentCuorse != null) coursesResult.IsEnrolled = true;
+                else coursesResult.IsEnrolled = false;
+            }
             return coursesResult;
         }
 
         public async Task<List<CourseResultDTO>> GetCoursesByTeacherId(string id)
         {
-            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
+            var currentUser = await _userHelpers.GetCurrentUserAsync();
             var courses = await _unitOfWork.Courses.FindAsync(c => c.TeacherId == id,
             orderBy: course => course.Name,
             direction: OrderDirection.Ascending,
@@ -178,9 +193,44 @@ namespace LMS.Application.Services
             {
                 var evaluations = await _unitOfWork.Evaluations.FindAsync(e => e.CourseId == course.Id);
                 course.Evaluation = CalculateAverageRate(evaluations.ToList());
-                var studentCuorse = await _unitOfWork.StudentCourses.FindFirstAsync(sc => sc.CourseId == course.Id && sc.StudentId == currentUser.Id);
-                if (studentCuorse != null) course.IsEnrolled = true;
-                else course.IsEnrolled = false;
+            }
+            if (currentUser != null)
+            {
+                foreach (var course in coursesResult)
+                {
+                    var studentCuorse = await _unitOfWork.StudentCourses.FindFirstAsync(sc =>
+                        sc.CourseId == course.Id && sc.StudentId == currentUser.Id);
+                    if (studentCuorse != null) course.IsEnrolled = true;
+                    else course.IsEnrolled = false;
+                }
+            }
+            return coursesResult;
+        }
+
+        public async Task<List<CourseResultDTO>> GetCoursesByStudentId(string id)
+        {
+            var currentUser = await _userHelpers.GetCurrentUserAsync();
+            var studentCourses = await _unitOfWork.StudentCourses.FindAsync(c => c.StudentId == id,
+                includes:
+                [
+                    c => c.Course,
+                ]);
+            var courses = studentCourses.Select(c => c.Course);
+            var coursesResult = _mapper.Map<IEnumerable<CourseResultDTO>>(courses).ToList();
+            foreach (var course in coursesResult)
+            {
+                var evaluations = await _unitOfWork.Evaluations.FindAsync(e => e.CourseId == course.Id);
+                course.Evaluation = CalculateAverageRate(evaluations.ToList());
+            }
+            if (currentUser != null)
+            {
+                foreach (var course in coursesResult)
+                {
+                    var studentCuorse = await _unitOfWork.StudentCourses.FindFirstAsync(sc =>
+                        sc.CourseId == course.Id && sc.StudentId == currentUser.Id);
+                    if (studentCuorse != null) course.IsEnrolled = true;
+                    else course.IsEnrolled = false;
+                }
             }
             return coursesResult;
         }
@@ -196,14 +246,15 @@ namespace LMS.Application.Services
             return studentCourses.Count();
         }
 
-        public async Task<List<CourseResultDTO>> SearchForCources(string subject, string semester, double from, double to, int pageSize, int pageIndex, bool academic = true, bool nonAcademic = true)
+        public async Task<Tuple<List<CourseResultDTO>, int>> SearchForCources(string subject, string semester, string level, double from, double to, int pageSize, int pageIndex, bool academic = true, bool nonAcademic = true)
         {
-            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
+            var currentUser = await _userHelpers.GetCurrentUserAsync();
             List<Course> courses = [];
             if (academic)
             {
-                var filteredAcademic = await _unitOfWork.AcademicCourses.FilterAsync(pageSize, pageIndex, [c => c.MaterialName.Contains(subject) || c.Name.Contains(subject)
-                        || subject.Contains(c.MaterialName) || subject.Contains(c.Name),
+                var filteredAcademic = await _unitOfWork.AcademicCourses.FilterAsync(pageSize, pageIndex, [c =>
+                            c.MaterialName.Contains(subject) || c.Name.Contains(subject)
+                        || subject.Contains(c.MaterialName) || subject.Contains(c.Name)||c.Level.Contains(level)||level.Contains(c.Level),
                     c => semester.Contains(c.Semester) || c.Semester.Contains(semester),
                     c => c.Price >= from && c.Price <= to
                 ],
@@ -234,11 +285,17 @@ namespace LMS.Application.Services
             {
                 var evaluations = await _unitOfWork.Evaluations.FindAsync(e => e.CourseId == course.Id);
                 course.Evaluation = CalculateAverageRate(evaluations.ToList());
-                var studentCuorse = await _unitOfWork.StudentCourses.FindFirstAsync(sc => sc.CourseId == course.Id && sc.StudentId == currentUser.Id);
-                if (studentCuorse != null) course.IsEnrolled = true;
-                else course.IsEnrolled = false;
             }
-            return coursesResult;
+            if (currentUser != null)
+            {
+                foreach (var course in coursesResult)
+                {
+                    var studentCuorse = await _unitOfWork.StudentCourses.FindFirstAsync(sc => sc.CourseId == course.Id && sc.StudentId == currentUser.Id);
+                    if (studentCuorse != null) course.IsEnrolled = true;
+                    else course.IsEnrolled = false;
+                }
+            }
+            return Tuple.Create(coursesResult, coursesResult.Count);
         }
 
 
