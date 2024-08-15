@@ -32,10 +32,10 @@ namespace LMS.Application.Services
             return await _unitOfWork.SaveAsync() > 0;
         }
 
-        public async Task<List<ExamResultDTO>> GetCourseExams(string courseId)
+        public async Task<List<ExamResultDTO>> GetCourseExams(string courseId, int pageSize, int pageindex)
         {
             var currentStudent = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
-            var exams = await _unitOfWork.Exams.FindAsync(b => b.CourseId == courseId, orderBy: b => b.Name);
+            var exams = await _unitOfWork.Exams.FilterAsync(pageSize, pageindex, [b => b.CourseId == courseId], orderBy: b => b.Name);
             var examsResult = _mapper.Map<IEnumerable<ExamResultDTO>>(exams).ToList();
             foreach (var exam in examsResult)
             {
