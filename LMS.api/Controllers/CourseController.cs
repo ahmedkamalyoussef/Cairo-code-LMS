@@ -98,9 +98,9 @@ namespace LMS.Api.Controllers
 
 
         [HttpGet("teacher-courses")]
-        public async Task<IActionResult> GetCoursesByTeacherId(string teacherId)
+        public async Task<IActionResult> GetCoursesByTeacherId(string teacherId, int pageSize, int pageindex)
         {
-            return Ok(await _courseService.GetCoursesByTeacherId(teacherId));
+            return Ok(await _courseService.GetCoursesByTeacherId(teacherId, pageSize, pageindex));
         }
         [Authorize]
         [HttpGet("student-courses")]

@@ -14,7 +14,7 @@ namespace LMS.Application.Interfaces
         public Task<bool> UpdateCourse(string id, EditCourseDTO course, IFormFile? file);
         public Task<bool> DeleteCourse(string id);
         public Task<int> GetNumberOfCourses();
-        public Task<List<CourseResultDTO>> GetCoursesByTeacherId(string id);
+        public Task<List<CourseResultDTO>> GetCoursesByTeacherId(string id, int pageSize, int pageindex);
         public Task<List<CourseResultDTO>> GetCoursesByStudentId(string id);
 
         public Task<Tuple<List<CourseResultDTO>, int>> SearchForCources(string subject, string semester, string level, double from, double to, int pageSize, int pageIndex, bool academic, bool nonAcademic);

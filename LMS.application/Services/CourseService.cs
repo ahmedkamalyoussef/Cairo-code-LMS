@@ -178,12 +178,13 @@ namespace LMS.Application.Services
             return coursesResult;
         }
 
-        public async Task<List<CourseResultDTO>> GetCoursesByTeacherId(string id)
+        public async Task<List<CourseResultDTO>> GetCoursesByTeacherId(string id, int pageSize, int pageindex)
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync();
-            var courses = await _unitOfWork.Courses.FindAsync(c => c.TeacherId == id,
+            var courses = await _unitOfWork.Courses.FilterAsync(pageSize, pageindex, [c => c.TeacherId == id],
             orderBy: course => course.Name,
             direction: OrderDirection.Ascending,
+
             includes:
             [
                 c => c.Teacher,
