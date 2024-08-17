@@ -48,14 +48,20 @@ namespace LMS.Api.Controllers
         [HttpGet("teacher-live-Classes")]
         public async Task<IActionResult> GetCurrentTeacherLiveClasses(int pageSize = 5, int pageindex = 1)
         {
-            return Ok(await _liveClassService.GetCurrentTeacherLiveClasses(pageSize, pageindex));
+            var tuple = await _liveClassService.GetCurrentTeacherLiveClasses(pageSize, pageindex);
+            var liveClasses = tuple.Item1;
+            int liveClassesCount = tuple.Item2;
+            return Ok(new { liveClasses, liveClassesCount });
         }
 
         [Authorize(Roles = ConstRoles.Student)]
         [HttpGet("student-live-Classes")]
         public async Task<IActionResult> GeStudentLiveClasses(int pageSize = 5, int pageindex = 1)
         {
-            return Ok(await _liveClassService.GeStudentLiveClasses(pageSize, pageindex));
+            var tuple = await _liveClassService.GeStudentLiveClasses(pageSize, pageindex);
+            var liveClasses = tuple.Item1;
+            int liveClassesCount = tuple.Item2;
+            return Ok(new { liveClasses, liveClassesCount });
         }
     }
 }

@@ -41,7 +41,7 @@ namespace LMS.Application.Services
         }
 
 
-        public async Task<List<LiveClassDTO>> GeStudentLiveClasses(int pageSize, int pageindex)
+        public async Task<Tuple<List<LiveClassDTO>, int>> GeStudentLiveClasses(int pageSize, int pageindex)
         {
             var student = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
             var studentCourses = await _unitOfWork.StudentCourses.FindAsync(c => c.StudentId == student.Id
@@ -50,15 +50,15 @@ namespace LMS.Application.Services
             var courses = studentCourses.Select(c => c.Course);
             var liveClasses = courses.SelectMany(c => c.LiveClasses).Skip((pageindex - 1) * pageSize).Take(pageSize);
             var liveClassResult = _mapper.Map<IEnumerable<LiveClassDTO>>(liveClasses).ToList();
-            return liveClassResult;
+            return Tuple.Create(liveClassResult, liveClassResult.Count);
         }
 
-        public async Task<List<LiveClassDTO>> GetCurrentTeacherLiveClasses(int pageSize, int pageindex)
+        public async Task<Tuple<List<LiveClassDTO>, int>> GetCurrentTeacherLiveClasses(int pageSize, int pageindex)
         {
             var teacher = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
             var liveClasses = await _unitOfWork.LiveClasses.FindWithPaginationAsync(pageSize, pageindex, l => l.CreatorId == teacher.Id);
             var liveClassesResult = _mapper.Map<IEnumerable<LiveClassDTO>>(liveClasses).ToList();
-            return liveClassesResult;
+            return Tuple.Create(liveClassesResult, liveClassesResult.Count);
         }
     }
 }
