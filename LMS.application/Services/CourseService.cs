@@ -178,7 +178,7 @@ namespace LMS.Application.Services
             return coursesResult;
         }
 
-        public async Task<List<CourseResultDTO>> GetCoursesByTeacherId(string id, int pageSize, int pageindex)
+        public async Task<Tuple<List<CourseResultDTO>, int>> GetCoursesByTeacherId(string id, int pageSize, int pageindex)
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync();
             var courses = await _unitOfWork.Courses.FilterAsync(pageSize, pageindex, [c => c.TeacherId == id],
@@ -205,7 +205,7 @@ namespace LMS.Application.Services
                     else course.IsEnrolled = false;
                 }
             }
-            return coursesResult;
+            return Tuple.Create(coursesResult, coursesResult.Count);
         }
 
         public async Task<List<CourseResultDTO>> GetCoursesByStudentId(string id)

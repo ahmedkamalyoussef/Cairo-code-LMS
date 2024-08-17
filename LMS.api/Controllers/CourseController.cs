@@ -100,7 +100,10 @@ namespace LMS.Api.Controllers
         [HttpGet("teacher-courses")]
         public async Task<IActionResult> GetCoursesByTeacherId(string teacherId, int pageSize = 5, int pageindex = 1)
         {
-            return Ok(await _courseService.GetCoursesByTeacherId(teacherId, pageSize, pageindex));
+            var tuple = await _courseService.GetCoursesByTeacherId(teacherId, pageSize, pageindex);
+            var courses = tuple.Item1;
+            var coursesCount = tuple.Item2;
+            return Ok(new { courses, coursesCount });
         }
         [Authorize]
         [HttpGet("student-courses")]
