@@ -93,10 +93,21 @@ namespace LMS.Application.Services
 
                 if (!await _userManager.CheckPasswordAsync(user, loginUser.Password))
                     return new AuthModel { Message = "Invalid password" };
+
                 if (!user.EmailConfirmed)
                 {
                     return new AuthModel { Message = "user not confirmed" };
                 }
+
+                // التحقق من عدد الأجهزة النشطة
+                if (user.ActiveDevices >= 2)
+                {
+                    return new AuthModel { Message = "User is already logged in on two devices" };
+                }
+
+                // زيادة عدد الأجهزة النشطة
+                user.ActiveDevices++;
+                await _userManager.UpdateAsync(user);
 
                 authModel.Message = $"Welcome Back, {user.FirstName}";
                 authModel.UserName = user.UserName;
@@ -127,19 +138,28 @@ namespace LMS.Application.Services
                 return new AuthModel { Message = "Invalid Authentication", Errors = new List<string> { ex.Message } };
             }
         }
+
         #endregion
 
         #region logout
         public async Task<string> LogoutAsync(string token)
         {
-            if (await _userHelpers.GetCurrentUserAsync() == null)
+            var user = await _userHelpers.GetCurrentUserAsync();
+            if (user == null)
             {
                 return "User Not Found";
             }
+
             await _signInManager.SignOutAsync();
+
+            // تقليل عدد الأجهزة النشطة
+            user.ActiveDevices = Math.Max(0, user.ActiveDevices - 1);
+            await _userManager.UpdateAsync(user);
+
             await RevokeTokenAsync(token);
             return "User Logged Out Successfully";
         }
+
         #endregion
 
         #region Refresh Token

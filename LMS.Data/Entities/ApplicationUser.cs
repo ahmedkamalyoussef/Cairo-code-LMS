@@ -9,6 +9,7 @@ namespace LMS.Data.Entities
         public string? OTP { get; set; }
         public DateTime OTPExpiry { get; set; }
         public List<RefreshToken>? RefreshTokens { get; set; }
+        public int ActiveDevices { get; set; } = 0;
 
     }
 }

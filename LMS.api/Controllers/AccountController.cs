@@ -84,7 +84,7 @@ namespace LMS.Api.Controllers
 
         #region Refresh Token
         [HttpPost("refresh-token")]
-        public async Task<IActionResult> RefreshTokenAsync([FromBody]string? refreshToken)
+        public async Task<IActionResult> RefreshTokenAsync([FromBody] string? refreshToken)
         {
             if (string.IsNullOrEmpty(refreshToken))
                 refreshToken = Request.Cookies["refreshToken"];
